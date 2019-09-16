@@ -3,10 +3,6 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 
-let knex = require('knex')({
-  client: 'sqlite3', connection: { filename: './tasks.sqlite' }
-});
-
 render(
   <AppContainer>
     <Root/>
