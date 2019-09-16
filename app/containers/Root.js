@@ -124,7 +124,7 @@ class Root extends Component<Props, State> {
 
   createTask = (): void => {
     const newTask: Task = {
-      title: "Created Task",
+      title: 'Created Task',
       created_at: randomDate(new Date(2000, 0, 1), new Date())
     };
 
@@ -135,12 +135,15 @@ class Root extends Component<Props, State> {
     tasksDiv = document.getElementById('tasks');
     tasksDiv.addEventListener('scroll', () => scroll(tasksDiv, this.fetchTasks, this.fetchPrevTasks));
 
-    knex('tasks').where({}).limit(fetchLimit).orderBy('created_at', 'desc')
-      .then((res: Array<Task>) => {
-        this.setState({ tasks: res });
-      });
+    // if (!seedDb()) {
+      knex('tasks').where({}).limit(fetchLimit).orderBy('created_at', 'desc')
+        .then((res: Array<Task>) => {
+          this.setState({ tasks: res });
+        });
+    // }
 
     setInterval(() => this.callRandomAction(chooseAction(actions)), 10000);
+    setTimeout(() => Root.forceUpdate(), 100)
   }
 
   render() {
