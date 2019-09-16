@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { format } from 'date-fns';
 import { chooseAction, randomDate, scroll } from '../helpers';
 import classes from './Root.modules.css';
-import { loremIpsum } from 'lorem-ipsum';
 
 const knex = require('knex')({
   client: 'sqlite3', connection: { filename: './tasks.sqlite' }
@@ -57,7 +56,7 @@ class Root extends Component<Props, State> {
               tasks: updatedTasks
             });
 
-            tasksDiv.scrollTop = 1800;
+            tasksDiv.scrollTop = 1500;
           });
       }
     }
