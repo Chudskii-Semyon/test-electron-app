@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { format } from 'date-fns';
-import { scroll } from '../helpers';
+import { chooseAction, randomDate, scroll } from '../helpers';
 import classes from './Root.modules.css';
 
 const knex = require('knex')({
@@ -12,6 +12,7 @@ let tasksDiv: $ElementType<HTMLDivElement> | null = null;
 const memoizedSize: number = 60;
 const fetchLimit: number = 20;
 let maxTasks: number = 400;
+const actions = ['create', 'update'];
 
 type Task = {
   id: number,
@@ -55,7 +56,7 @@ class Root extends Component<Props, State> {
               tasks: updatedTasks
             });
 
-            tasksDiv.scrollTop = 1800;
+            tasksDiv.scrollTop = 1500;
           });
       }
     }
@@ -80,6 +81,56 @@ class Root extends Component<Props, State> {
     }
   };
 
+  updateTask = (): void => {
+    const { tasks } = this.state;
+
+    const randomId: number = Math.floor(Math.random() * 10);
+
+    const updatedTitle: string = 'Updated title';
+    let taskIndex: number | null = null;
+
+    knex('tasks').where('id', randomId)
+      .update({ title: updatedTitle })
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+
+    tasks.forEach((task: Task, index: number) => {
+      if (task.id === randomId) {
+        taskIndex = index;
+      }
+    });
+
+    if (taskIndex) {
+      const updatedTasks: Array<Task> = [...tasks];
+      updatedTasks[taskIndex].title = updatedTitle;
+
+      this.setState({ tasks: updatedTasks });
+    }
+  };
+
+  callRandomAction = (action: string): void => {
+    switch (action) {
+      case 'update': {
+        this.updateTask();
+        break;
+      }
+      case 'create':
+        this.createTask();
+        break;
+      default:
+        this.updateTask();
+    }
+  };
+
+  createTask = (): void => {
+    const newTask: Task = {
+      title: "Created Task",
+      created_at: randomDate(new Date(2000, 0, 1), new Date())
+    };
+
+    knex('tasks').insert(newTask).then(() => maxTasks += 1);
+  };
+
   componentDidMount() {
     tasksDiv = document.getElementById('tasks');
     tasksDiv.addEventListener('scroll', () => scroll(tasksDiv, this.fetchTasks, this.fetchPrevTasks));
@@ -88,6 +139,8 @@ class Root extends Component<Props, State> {
       .then((res: Array<Task>) => {
         this.setState({ tasks: res });
       });
+
+    setInterval(() => this.callRandomAction(chooseAction(actions)), 10000);
   }
 
   render() {
