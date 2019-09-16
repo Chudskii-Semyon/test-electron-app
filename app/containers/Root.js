@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from 'react';
 import { format } from 'date-fns';
-import classes from './Root.modules.css';
 import { scroll } from '../helpers';
+import classes from './Root.modules.css';
 
 const knex = require('knex')({
   client: 'sqlite3', connection: { filename: './tasks.sqlite' }
@@ -58,6 +58,25 @@ class Root extends Component<Props, State> {
             tasksDiv.scrollTop = 1800;
           });
       }
+    }
+  };
+
+  fetchPrevTasks = (): void => {
+    const { tasks } = this.state;
+
+    if (tasks.length >= memoizedSize) {
+      knex('tasks').where('created_at', '>', tasks[0].created_at)
+        .orderBy('created_at', 'asc')
+        .limit(fetchLimit)
+        .then(res => {
+          if (res.length) {
+            res.reverse();
+            const slicedTasks: Array<Task> = tasks.slice(0, tasks.length - fetchLimit);
+
+            this.setState({ tasks: [...res, ...slicedTasks] });
+            tasksDiv.scrollTop = 1500;
+          }
+        });
     }
   };
 
