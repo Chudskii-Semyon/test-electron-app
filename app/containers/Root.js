@@ -80,6 +80,33 @@ class Root extends Component<Props, State> {
     }
   };
 
+  updateTask = (): void => {
+    const { tasks } = this.state;
+
+    const randomId: number = Math.floor(Math.random() * 10) + 390;
+
+    const updatedTitle: string = 'UPDDDD title';
+    let taskIndex: number | null = null;
+
+    knex('tasks').where('id', randomId)
+      .update({ title: updatedTitle })
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+
+    tasks.forEach((task: Task, index: number) => {
+      if (task.id === randomId) {
+        taskIndex = index;
+      }
+    });
+
+    if (taskIndex) {
+      const updatedTasks: Array<Task> = [...tasks];
+      updatedTasks[taskIndex].title = updatedTitle;
+
+      this.setState({ tasks: updatedTasks });
+    }
+  };
+
   componentDidMount() {
     tasksDiv = document.getElementById('tasks');
     tasksDiv.addEventListener('scroll', () => scroll(tasksDiv, this.fetchTasks, this.fetchPrevTasks));
