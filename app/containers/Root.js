@@ -125,7 +125,7 @@ class Root extends Component<Props, State> {
 
   createTask = (): void => {
     const newTask: Task = {
-      title: loremIpsum({ count: 5, units: 'words' }),
+      title: "Created Task",
       created_at: randomDate(new Date(2000, 0, 1), new Date())
     };
 
