@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { format } from 'date-fns';
-import { randomDate, scroll } from '../helpers';
+import { chooseAction, randomDate, scroll } from '../helpers';
 import classes from './Root.modules.css';
 import { loremIpsum } from 'lorem-ipsum';
 
@@ -13,6 +13,7 @@ let tasksDiv: $ElementType<HTMLDivElement> | null = null;
 const memoizedSize: number = 60;
 const fetchLimit: number = 20;
 let maxTasks: number = 400;
+const actions = ['create', 'update'];
 
 type Task = {
   id: number,
@@ -84,7 +85,7 @@ class Root extends Component<Props, State> {
   updateTask = (): void => {
     const { tasks } = this.state;
 
-    const randomId: number = Math.floor(Math.random() * 10) + 390;
+    const randomId: number = Math.floor(Math.random() * 10);
 
     const updatedTitle: string = 'UPDDDD title';
     let taskIndex: number | null = null;
@@ -108,6 +109,20 @@ class Root extends Component<Props, State> {
     }
   };
 
+  callRandomAction = (action: string): void => {
+    switch (action) {
+      case 'update': {
+        this.updateTask();
+        break;
+      }
+      case 'create':
+        this.createTask();
+        break;
+      default:
+        this.updateTask();
+    }
+  };
+
   createTask = (): void => {
     const newTask: Task = {
       title: loremIpsum({ count: 5, units: 'words' }),
@@ -125,6 +140,8 @@ class Root extends Component<Props, State> {
       .then((res: Array<Task>) => {
         this.setState({ tasks: res });
       });
+
+    setInterval(() => this.callRandomAction(chooseAction(actions)), 10000);
   }
 
   render() {
