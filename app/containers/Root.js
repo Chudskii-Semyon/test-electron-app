@@ -87,7 +87,7 @@ class Root extends Component<Props, State> {
 
     const randomId: number = Math.floor(Math.random() * 10);
 
-    const updatedTitle: string = 'UPDDDD title';
+    const updatedTitle: string = 'Updated title';
     let taskIndex: number | null = null;
 
     knex('tasks').where('id', randomId)
