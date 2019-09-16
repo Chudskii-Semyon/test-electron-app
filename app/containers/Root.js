@@ -1,8 +1,9 @@
 // @flow
 import React, { Component } from 'react';
 import { format } from 'date-fns';
-import { scroll } from '../helpers';
+import { randomDate, scroll } from '../helpers';
 import classes from './Root.modules.css';
+import { loremIpsum } from 'lorem-ipsum';
 
 const knex = require('knex')({
   client: 'sqlite3', connection: { filename: './tasks.sqlite' }
@@ -105,6 +106,15 @@ class Root extends Component<Props, State> {
 
       this.setState({ tasks: updatedTasks });
     }
+  };
+
+  createTask = (): void => {
+    const newTask: Task = {
+      title: loremIpsum({ count: 5, units: 'words' }),
+      created_at: randomDate(new Date(2000, 0, 1), new Date())
+    };
+
+    knex('tasks').insert(newTask).then(() => maxTasks += 1);
   };
 
   componentDidMount() {
